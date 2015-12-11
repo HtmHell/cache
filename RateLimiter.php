@@ -38,6 +38,7 @@ class RateLimiter
 
         if ($this->attempts($key) > $maxAttempts || $lockedOut) {
             if (! $lockedOut) {
+                $this->cache->forget($key); // Remove attempts so after lockout decays, it will count from the beginning
                 $this->cache->add($key.':lockout', time() + ($decayMinutes * 60), $decayMinutes);
             }
 
